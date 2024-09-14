@@ -6,6 +6,8 @@ import { UserModule } from './user/user.module';
 import { CakeModule } from './cake/cake.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ApiKeyGuard } from './guards/api-key/api-key.guard';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -24,12 +26,13 @@ import { ApiKeyGuard } from './guards/api-key/api-key.guard';
     UserModule,
     CakeModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: ApiKeyGuard,
-    },
+    AppService,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ApiKeyGuard,
+    // },
   ],
 })
 export class AppModule {}
