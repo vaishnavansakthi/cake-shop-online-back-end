@@ -29,10 +29,10 @@ import { AppService } from './app.service';
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: ApiKeyGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: ApiKeyGuard,
+    },
   ],
 })
 export class AppModule {}
