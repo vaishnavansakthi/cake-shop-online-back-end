@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import 'dotenv/config';
 import { AuthModule } from './user/auth.module';
 import { UserModule } from './user/user.module';
@@ -26,9 +24,8 @@ import { ApiKeyGuard } from './guards/api-key/api-key.guard';
     UserModule,
     CakeModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
-    AppService,
     {
       provide: APP_GUARD,
       useClass: ApiKeyGuard,
