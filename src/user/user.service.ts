@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -16,6 +16,7 @@ export class UserService {
     username: string,
     email: string,
     password: string,
+    MobileNumber: string,
     role: Role,
   ): Promise<User> {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -23,6 +24,7 @@ export class UserService {
       username,
       email,
       password: hashedPassword,
+      MobileNumber,
       role,
     });
     return this.userRepository.save(user);
@@ -39,9 +41,47 @@ export class UserService {
   async updatePassword(email: string, newPassword: string): Promise<void> {
     const user = await this.findByEmail(email);
     if (user) {
-      user.resetOtp = null;
       user.password = newPassword;
+      user.resetToken = null;
+      user.resetTokenExpiry = null;
       await this.userRepository.save(user);
     }
+  }
+
+  // New updateProfile method
+  async updateProfile(
+    userId: number, // Assuming you're updating based on userId
+    newUsername?: string,
+    newEmail?: string,
+    newMobileNumber?: string,
+    newRole?: Role, // Optional, in case you need to update role
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Update the profile fields if they are provided
+    if (newUsername) {
+      user.username = newUsername;
+    }
+    if (newEmail) {
+      // Optionally, you can check for email uniqueness before updating
+      const emailExists = await this.findByEmail(newEmail);
+      if (emailExists && emailExists.id !== userId) {
+        throw new NotFoundException('Email is already in use');
+      }
+      user.email = newEmail;
+    }
+    if (newMobileNumber) {
+      user.MobileNumber = newMobileNumber;
+    }
+    if (newRole) {
+      user.role = newRole;
+    }
+
+    // Save the updated user details
+    return this.userRepository.save(user);
   }
 }

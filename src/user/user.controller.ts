@@ -1,6 +1,15 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  NotFoundException,
+  UseGuards,
+  Put,
+  Param,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { Role } from './role.enum';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class UserController {
@@ -11,8 +20,40 @@ export class UserController {
     @Body('username') username: string,
     @Body('email') email: string,
     @Body('password') password: string,
+    @Body('mobileNumber') mobileNumber: string,
     @Body('role') role: Role,
   ) {
-    return this.userService.signUp(username, email, password, role);
+    return this.userService.signUp(
+      username,
+      email,
+      password,
+      mobileNumber,
+      role,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard) // Ensure only authenticated users can update profiles
+  @Put('update-profile/:id')
+  async updateProfile(
+    @Param('id') id: number,
+    @Body('username') username?: string, // Optional field
+    @Body('email') email?: string, // Optional field
+    @Body('mobileNumber') mobileNumber?: string, // Optional field
+    @Body('role') role?: Role,
+  ) {
+    // Call the service to update the profile
+    const updatedUser = await this.userService.updateProfile(
+      id,
+      username,
+      email,
+      mobileNumber,
+      role,
+    );
+
+    if (!updatedUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    return { message: 'Profile updated successfully', user: updatedUser };
   }
 }

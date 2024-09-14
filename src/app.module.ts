@@ -6,6 +6,8 @@ import 'dotenv/config';
 import { AuthModule } from './user/auth.module';
 import { UserModule } from './user/user.module';
 import { CakeModule } from './cake/cake.module';
+import { APP_GUARD } from '@nestjs/core';
+import { ApiKeyGuard } from './guards/api-key/api-key.guard';
 
 @Module({
   imports: [
@@ -25,6 +27,12 @@ import { CakeModule } from './cake/cake.module';
     CakeModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ApiKeyGuard,
+    },
+  ],
 })
 export class AppModule {}

@@ -16,7 +16,13 @@ export class User {
   password: string;
 
   @Column({ nullable: true })
-  resetOtp: string;
+  MobileNumber: string;
+
+  @Column({ nullable: true })
+  resetToken: string;
+
+  @Column({ nullable: true })
+  resetTokenExpiry: Date;
 
   @Column({ type: 'enum', enum: Role, default: Role.Customer })
   role: Role;
