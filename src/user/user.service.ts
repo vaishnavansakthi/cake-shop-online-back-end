@@ -19,6 +19,13 @@ export class UserService {
     MobileNumber: string,
     role: Role,
   ): Promise<User> {
+    const existingUser = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (existingUser) {
+      throw new NotFoundException('Email is already registered');
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = this.userRepository.create({
       username,
@@ -48,7 +55,7 @@ export class UserService {
     }
   }
 
-  async deleteUser(userId: number): Promise<void> {
+  async deleteUser(userId: string): Promise<void> {
     // Find the user first
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
@@ -66,7 +73,7 @@ export class UserService {
 
   // New updateProfile method
   async updateProfile(
-    userId: number, // Assuming you're updating based on userId
+    userId: string, // Assuming you're updating based on userId
     newUsername?: string,
     newEmail?: string,
     newMobileNumber?: string,

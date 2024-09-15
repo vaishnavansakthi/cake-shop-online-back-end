@@ -17,7 +17,7 @@ export class AuthService {
       const { ...result } = user;
       return result;
     }
-    throw new UnauthorizedException();
+    throw new UnauthorizedException('Email or password is incorrect');
   }
 
   async signIn(email: string, password: string) {

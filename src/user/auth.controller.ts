@@ -15,6 +15,7 @@ import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import * as jwt from 'jsonwebtoken';
 import * as otpGenerator from 'otp-generator';
+import { LoginUserDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -27,8 +28,8 @@ export class AuthController {
   ) {}
 
   @Post('signin')
-  signIn(@Body('email') email: string, @Body('password') password: string) {
-    return this.authService.signIn(email, password);
+  signIn(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.signIn(loginUserDto.email, loginUserDto.password);
   }
 
   @Post('forgot-password')

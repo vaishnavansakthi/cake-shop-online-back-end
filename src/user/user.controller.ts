@@ -11,30 +11,25 @@ import {
 import { UserService } from './user.service';
 import { Role } from './role.enum';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { CreateUserDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signup')
-  signUp(
-    @Body('username') username: string,
-    @Body('email') email: string,
-    @Body('password') password: string,
-    @Body('mobileNumber') mobileNumber: string,
-    @Body('role') role: Role,
-  ) {
+  signUp(@Body() createUserDto: CreateUserDto) {
     return this.userService.signUp(
-      username,
-      email,
-      password,
-      mobileNumber,
-      role,
+      createUserDto.username,
+      createUserDto.email,
+      createUserDto.password,
+      createUserDto.mobileNumber,
+      createUserDto.role,
     );
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id') id: number): Promise<void> {
+  async deleteUser(@Param('id') id: string): Promise<void> {
     // Remove or replace the logic that uses UserService
     await this.userService.deleteUser(id);
   }
@@ -42,7 +37,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard) // Ensure only authenticated users can update profiles
   @Put('update-profile/:id')
   async updateProfile(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body('username') username?: string, // Optional field
     @Body('email') email?: string, // Optional field
     @Body('mobileNumber') mobileNumber?: string, // Optional field
