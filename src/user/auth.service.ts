@@ -23,6 +23,7 @@ export class AuthService {
   async signIn(email: string, password: string) {
     const user = await this.validateUser(email, password);
     const payload: JwtPayload = {
+      username: user.username,
       email: user.email,
       role: user.role,
       mobileNumber: user.mobileNumber,

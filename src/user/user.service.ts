@@ -48,6 +48,22 @@ export class UserService {
     }
   }
 
+  async deleteUser(userId: number): Promise<void> {
+    // Find the user first
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    // Perform the delete operation
+    const result = await this.userRepository.delete(userId);
+
+    // Check if the delete operation was successful
+    if (result.affected === 0) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+  }
+
   // New updateProfile method
   async updateProfile(
     userId: number, // Assuming you're updating based on userId

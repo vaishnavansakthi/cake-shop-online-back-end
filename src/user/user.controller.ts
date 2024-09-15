@@ -6,6 +6,7 @@ import {
   UseGuards,
   Put,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Role } from './role.enum';
@@ -30,6 +31,12 @@ export class UserController {
       mobileNumber,
       role,
     );
+  }
+
+  @Delete(':id')
+  async deleteUser(@Param('id') id: number): Promise<void> {
+    // Remove or replace the logic that uses UserService
+    await this.userService.deleteUser(id);
   }
 
   @UseGuards(JwtAuthGuard) // Ensure only authenticated users can update profiles
